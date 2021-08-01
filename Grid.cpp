@@ -112,6 +112,80 @@ void Grid::movePoints(Piece& f, const Point& t)
 }
 
 
+bool Grid::pawnCheck(Piece& p, const Point& to) {
+
+	if (this->getGrid(to) != NULL) {
+		return false;
+	}
+
+	if (p.getLoc().m_x == 1 || p.getLoc().m_x == 6) {
+		if (to.m_x == p.getLoc().m_x + 1 || to.m_x == p.getLoc().m_x + 2) {
+			movePoints(p, to);
+			return true;
+		}
+	}
+	else if (to.m_x == p.getLoc().m_x + 1) {
+		movePoints(p, to);
+		return true;
+	}
+
+	return false;
+
+}
+
+
+bool Grid::rookCheck(Piece& p, const Point& to) {
+
+	//Might be some Problems 
+		//TODO - Maybe to fix?
+
+	if (this->getGrid(to) != NULL) {
+		return false;
+	}
+	if (to.m_y == p.getLoc().m_y || to.m_x == p.getLoc().m_x) {
+
+		for (int i = p.getLoc().m_x + 1; i < to.m_x; i++) {
+			if (m_grid[i][to.m_y] != NULL) {
+				return false;
+			}
+		}
+		movePoints(p, to);
+		return true;
+	}
+
+	return false;
+
+}
+
+
+bool Grid::horseCheck(Piece& p, const Point& to) {
+
+
+	//The diffrences between the x and y values are always 1 or 2 thats the check later
+
+	if (this->getGrid(to) != NULL && to.m_x >= 0 && to.m_x <= 8 && to.m_y >= 0 && to.m_y <= 8) {
+		return false;
+	}
+
+	if (abs(p.getLoc().m_x - to.m_x) > 2 || abs(p.getLoc().m_y - to.m_y) > 2) {
+		return false;
+	}
+
+	if ((to.m_x - 1 == p.getLoc().m_x || to.m_x - 2 == p.getLoc().m_x ||
+		to.m_x + 1 == p.getLoc().m_x || to.m_x + 2 == p.getLoc().m_x)
+		&& (to.m_y - 1 == p.getLoc().m_y || to.m_y - 2 == p.getLoc().m_y ||
+			to.m_y + 1 == p.getLoc().m_y || to.m_y + 2 == p.getLoc().m_y)) {
+
+		movePoints(p, to);
+		return true;
+
+	}
+
+	return false;
+
+}
+
+
 //TODO - Finished!
 bool Grid::isValidMove(Piece& p, const Point& to)
 {
@@ -119,65 +193,20 @@ bool Grid::isValidMove(Piece& p, const Point& to)
 
 	if (p.getName() == 'P') {
 
-		if (this->getGrid(to) != NULL) {
-			return false;
-		}
+		return pawnCheck(p, to);
 
-		if (p.getLoc().m_x == 1 || p.getLoc().m_x == 6) {
-			if (to.m_x == p.getLoc().m_x + 1 || to.m_x == p.getLoc().m_x + 2) {
-				movePoints(p, to);
-				return true;
-			}
-		}
-		else if(to.m_x == p.getLoc().m_x + 1) {
-				movePoints(p, to);
-				return true;
-		}
-
-		return false;
 	}
 
 	if (p.getName() == 'R') {
 
-		//Might be some Problems 
-		//TODO - Maybe to fix?
+		return rookCheck(p, to);
 
-		if (this->getGrid(to) != NULL) {
-			return false;
-		}
-		if (to.m_y == p.getLoc().m_y || to.m_x == p.getLoc().m_x) {
-
-			for (int i = p.getLoc().m_x+1; i < to.m_x; i++) {
-				if (m_grid[i][to.m_y] != NULL) {
-					return false;
-				}
-			}
-			movePoints(p, to);
-			return true;
-		}
-
-		return false;
 	}
 
 	if (p.getName() == 'H') {
 
-		if (this->getGrid(to) != NULL && to.m_x >= 0 && to.m_x <= 8 && to.m_y >= 0 && to.m_y <= 8) {
-			return false;
-		}
-
-		if (abs(p.getLoc().m_x - to.m_x) > 2 || abs(p.getLoc().m_y-to.m_y) > 2){
-			return false;
-		}
-
-		if ((to.m_x - 1 == p.getLoc().m_x || to.m_x - 2 == p.getLoc().m_x || to.m_x + 1 == p.getLoc().m_x || to.m_x + 2 == p.getLoc().m_x) && (to.m_y - 1 == p.getLoc().m_y || to.m_y - 2 == p.getLoc().m_y || to.m_y + 1 == p.getLoc().m_y || to.m_y + 2 == p.getLoc().m_y)) {
-			
-			movePoints(p, to);
-			return true;
-
-		}
-
-		return false;
-
+	
+		return horseCheck(p, to);
 
 	}
 
