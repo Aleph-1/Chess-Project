@@ -1,5 +1,6 @@
 #include "Grid.h"
 #include "Piece.h"
+#include <math.h>
 using namespace std;
 
 Grid::Grid()
@@ -118,6 +119,10 @@ bool Grid::isValidMove(Piece& p, const Point& to)
 
 	if (p.getName() == 'P') {
 
+		if (this->getGrid(to) != NULL) {
+			return false;
+		}
+
 		if (p.getLoc().m_x == 1 || p.getLoc().m_x == 6) {
 			if (to.m_x == p.getLoc().m_x + 1 || to.m_x == p.getLoc().m_x + 2) {
 				movePoints(p, to);
@@ -140,7 +145,7 @@ bool Grid::isValidMove(Piece& p, const Point& to)
 		if (this->getGrid(to) != NULL) {
 			return false;
 		}
-		if ((this->getGrid(to) == NULL && to.m_y == p.getLoc().m_y) || (this->getGrid(to) == NULL && to.m_x == p.getLoc().m_x)) {
+		if (to.m_y == p.getLoc().m_y || to.m_x == p.getLoc().m_x) {
 
 			for (int i = p.getLoc().m_x+1; i < to.m_x; i++) {
 				if (m_grid[i][to.m_y] != NULL) {
@@ -153,6 +158,29 @@ bool Grid::isValidMove(Piece& p, const Point& to)
 
 		return false;
 	}
+
+	if (p.getName() == 'H') {
+
+		if (this->getGrid(to) != NULL && to.m_x >= 0 && to.m_x <= 8 && to.m_y >= 0 && to.m_y <= 8) {
+			return false;
+		}
+
+		if (abs(p.getLoc().m_x - to.m_x) > 2 || abs(p.getLoc().m_y-to.m_y) > 2){
+			return false;
+		}
+
+		if ((to.m_x - 1 == p.getLoc().m_x || to.m_x - 2 == p.getLoc().m_x || to.m_x + 1 == p.getLoc().m_x || to.m_x + 2 == p.getLoc().m_x) && (to.m_y - 1 == p.getLoc().m_y || to.m_y - 2 == p.getLoc().m_y || to.m_y + 1 == p.getLoc().m_y || to.m_y + 2 == p.getLoc().m_y)) {
+			
+			movePoints(p, to);
+			return true;
+
+		}
+
+		return false;
+
+
+	}
+
 
 
 	return false;
