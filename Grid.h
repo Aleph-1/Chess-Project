@@ -12,8 +12,8 @@ public:
 	Piece* getGrid(Point p);
 	void setGrid(Point& p, Piece& s); // The ch is the char that the place will be set to.
 	void PrintGrid();
-	void movePoints(const Point& f, const Point& t);
-	bool isValidMove(Piece& p, const Point& from, const Point& to);
+	void movePoints(Piece& f, const Point& t);
+	bool isValidMove(Piece& p, const Point& to);
 	
 
 private:

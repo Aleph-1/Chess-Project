@@ -42,15 +42,6 @@ Grid::Grid()
 		m_grid[6][i] = new Piece(6,i,'P',1); // Pawn.
 	}
 
-	
-
-
-
-
-
-
-
-
 
 }
 
@@ -73,7 +64,7 @@ void Grid::setGrid(Point& p, Piece& s)
 void Grid::PrintGrid()
 {
 
-	cout << "    A   B  C  D  E  F  G  H"<<endl;
+	cout << "    A   B   C   D   E   F   G   H" << endl;
 
 	for (int i = 0; i < 8; i++) {
 
@@ -108,36 +99,60 @@ void Grid::PrintGrid()
 
 }
 
-void Grid::movePoints(const Point& f, const Point& t)
+void Grid::movePoints(Piece& f, const Point& t)
 {
 
-	this->m_grid[t.m_x][t.m_y] = this->m_grid[f.m_x][f.m_y];
-	this->m_grid[f.m_x][f.m_y] = NULL;
+	this->m_grid[t.m_x][t.m_y] = this->m_grid[f.getLoc().m_x][f.getLoc().m_y];
+	this->m_grid[f.getLoc().m_x][f.getLoc().m_y] = NULL;
+	f.setLoc(t);
+
 
 
 }
 
-bool Grid::isValidMove(Piece& p, const Point& from, const Point& to)
+
+//TODO - Finished!
+bool Grid::isValidMove(Piece& p, const Point& to)
 {
+
+
 	if (p.getName() == 'P') {
 
 		if (p.getLoc().m_x == 1 || p.getLoc().m_x == 6) {
-			if (to.m_x == from.m_x + 1 || to.m_x == from.m_x + 2) {
-				movePoints(from, to);
+			if (to.m_x == p.getLoc().m_x + 1 || to.m_x == p.getLoc().m_x + 2) {
+				movePoints(p, to);
 				return true;
 			}
 		}
-		else if(to.m_x == from.m_x + 1) {
-				movePoints(from, to);
+		else if(to.m_x == p.getLoc().m_x + 1) {
+				movePoints(p, to);
 				return true;
 		}
 
 		return false;
-
-
 	}
 
+	if (p.getName() == 'R') {
 
+		//Might be some Problems 
+		//TODO - Maybe to fix?
+
+		if (this->getGrid(to) != NULL) {
+			return false;
+		}
+		if ((this->getGrid(to) == NULL && to.m_y == p.getLoc().m_y) || (this->getGrid(to) == NULL && to.m_x == p.getLoc().m_x)) {
+
+			for (int i = p.getLoc().m_x+1; i < to.m_x; i++) {
+				if (m_grid[i][to.m_y] != NULL) {
+					return false;
+				}
+			}
+			movePoints(p, to);
+			return true;
+		}
+
+		return false;
+	}
 
 
 	return false;

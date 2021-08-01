@@ -13,7 +13,7 @@ public:
 public:
 	const char getName();
 	const Point& getLoc();
-	void setLoc(Point& p);
+	void setLoc(const Point& p);
 	const bool getColor();
 	static int count;
     
