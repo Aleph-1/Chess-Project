@@ -25,13 +25,13 @@ Piece::Piece(const Piece& p) : m_loc(p.m_loc)
 
 }
 
-char Piece::getName()
+const char Piece::getName()
 {
 
 	return m_name;
 }
 
-Point& Piece::getLoc()
+const Point& Piece::getLoc()
 {
 
 	return m_loc;
@@ -44,7 +44,7 @@ void Piece::setLoc(Point& p)
 	m_loc = p;
 }
 
-bool Piece::getColor()
+const bool Piece::getColor()
 {
 	return m_color;
 }

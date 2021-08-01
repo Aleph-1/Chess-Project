@@ -1,4 +1,5 @@
 #include "Grid.h"
+#include "Piece.h"
 using namespace std;
 
 Grid::Grid()
@@ -107,7 +108,7 @@ void Grid::PrintGrid()
 
 }
 
-void Grid::movePoints(Point& f, Point& t)
+void Grid::movePoints(const Point& f, const Point& t)
 {
 
 	this->m_grid[t.m_x][t.m_y] = this->m_grid[f.m_x][f.m_y];
@@ -116,9 +117,25 @@ void Grid::movePoints(Point& f, Point& t)
 
 }
 
-bool Grid::isValidMove(const Piece& p, const Point& from, const Point& to)
+bool Grid::isValidMove(Piece& p, const Point& from, const Point& to)
 {
+	if (p.getName() == 'P') {
 
+		if (p.getLoc().m_x == 1 || p.getLoc().m_x == 6) {
+			if (to.m_x == from.m_x + 1 || to.m_x == from.m_x + 2) {
+				movePoints(from, to);
+				return true;
+			}
+		}
+		else if(to.m_x == from.m_x + 1) {
+				movePoints(from, to);
+				return true;
+		}
+
+		return false;
+
+
+	}
 
 
 

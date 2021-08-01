@@ -9,9 +9,13 @@ int main() {
 	Point a(1, 'A');
 	Piece Queen(a, 'Q', 1);
 	Grid A;
+	Point p(2, 'A');
+	Point q(4, 'A');
+	Piece pq(p, 'P', 0);
+
 	A.PrintGrid();
-	Point t(3, 'B');
-	A.movePoints(a, t);
+
+	bool ab = A.isValidMove(pq,p, q);
 	A.PrintGrid();
 
 	

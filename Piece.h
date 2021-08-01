@@ -11,12 +11,12 @@ public:
 	Piece(const Piece& p);
 
 public:
-	static int count;
-    char getName();
-	Point& getLoc();
+	const char getName();
+	const Point& getLoc();
 	void setLoc(Point& p);
-	bool getColor();
-	
+	const bool getColor();
+	static int count;
+    
 
 private:
 
