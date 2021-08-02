@@ -149,6 +149,7 @@ bool Grid::rookCheck(Piece& p, const Point& to) {
 				return false;
 			}
 		}
+
 		movePoints(p, to);
 		return true;
 	}
@@ -185,8 +186,138 @@ bool Grid::horseCheck(Piece& p, const Point& to) {
 
 }
 
+bool Grid::bishopCheck(Piece& p, const Point& to) {
 
-//TODO - Finished!
+	//Might be some Problems 
+		//TODO - Maybe to fix?
+
+	if (this->getGrid(to) != NULL) {
+		return false;
+	}
+
+	int x_dist = abs(to.m_x - p.getLoc().m_x);
+	int y_dist = abs(to.m_y - p.getLoc().m_y);
+
+
+		
+
+		if ((p.getLoc().m_x + x_dist == to.m_x && p.getLoc().m_y + y_dist == to.m_y) ||
+			(p.getLoc().m_x + x_dist == to.m_x && p.getLoc().m_y - y_dist == to.m_y) ||
+			(p.getLoc().m_x - x_dist == to.m_x && p.getLoc().m_y + y_dist == to.m_y) ||
+			(p.getLoc().m_x - x_dist == to.m_x && p.getLoc().m_y - y_dist == to.m_y)) {
+
+
+			if (to.m_x > p.getLoc().m_x) {
+
+				if (to.m_y > p.getLoc().m_y) {
+
+					int j = p.getLoc().m_y + 1;
+					for (int i = p.getLoc().m_x + 1; i < to.m_x, j < to.m_y; i++, j++) {
+						if (m_grid[i][j] != NULL) {
+							return false;
+						}
+					}
+
+				}
+				else {
+
+					int j = to.m_y;
+					for (int i = to.m_x ; i != p.getLoc().m_x, j != p.getLoc().m_y; i--, j++) {
+						if (m_grid[i][j] != NULL) {
+							return false;
+						}
+					}
+
+
+
+				}
+				movePoints(p, to);
+				return true;
+
+
+			}
+
+			if (to.m_x < p.getLoc().m_x) {
+
+				if (to.m_y > p.getLoc().m_y) {
+
+					int j = p.getLoc().m_y + 1;
+					for (int i = p.getLoc().m_x - 1; i != to.m_x, j < to.m_y; i--, j++) {
+						if (m_grid[i][j] != NULL) {
+							return false;
+						}
+					}
+
+				}
+
+				else {
+
+					int j = to.m_y;
+					for (int i = to.m_x; i != p.getLoc().m_x, j != p.getLoc().m_y; i++, j++) {
+						if (m_grid[i][j] != NULL) {
+							return false;
+						}
+					}
+
+
+
+				}
+				movePoints(p, to);
+				return true;
+
+
+			}
+		}
+			
+
+
+	return false;
+
+}
+
+bool Grid::kingCheck(Piece& p, const Point& to) {
+
+	if (this->getGrid(to) != NULL) {
+		return false;
+	}
+
+	if ((to.m_x - 1 == p.getLoc().m_x || to.m_x == p.getLoc().m_x ||
+		to.m_x + 1 == p.getLoc().m_x || to.m_x == p.getLoc().m_x)
+		&& (to.m_y - 1 == p.getLoc().m_y || to.m_y == p.getLoc().m_y ||
+			to.m_y + 1 == p.getLoc().m_y || to.m_y == p.getLoc().m_y)) {
+
+		movePoints(p, to);
+		return true;
+
+	}
+
+	return false;
+
+}
+
+bool Grid::queenCheck(Piece& p, const Point& to) {
+
+
+	if (rookCheck(p, to)) {
+		return true;
+	}
+
+	if (bishopCheck(p, to)) {
+		return true;
+	}
+
+
+	return false;
+
+
+
+
+}
+
+
+
+
+//TODO - Add Movement
 bool Grid::isValidMove(Piece& p, const Point& to)
 {
 
@@ -209,6 +340,27 @@ bool Grid::isValidMove(Piece& p, const Point& to)
 		return horseCheck(p, to);
 
 	}
+
+
+	if (p.getName() == 'B') {
+
+		return bishopCheck(p, to);
+
+	}
+
+	if (p.getName() == 'K') {
+
+		return kingCheck(p, to);
+
+	}
+
+	if (p.getName() == 'Q') {
+
+		return queenCheck(p, to);
+
+	}
+
+
 
 
 
