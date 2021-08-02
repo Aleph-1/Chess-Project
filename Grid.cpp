@@ -212,5 +212,5 @@ bool Grid::isValidMove(Piece& p, const Point& to)
 
 
 
-	return false;
+	
 }
