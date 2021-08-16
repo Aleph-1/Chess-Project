@@ -6,23 +6,31 @@
 class Piece
 {
 public:
-	Piece(Point a, char name, bool color);
-	Piece(int x, int y, char name, bool color);// Ctor
+	Piece(Point a, char name, int color);
+	Piece(int x, int y, char name, int color);// Ctor
 	Piece(const Piece& p);
 
 public:
 	const char getName();
-	const Point& getLoc();
+	void setName(char name);
+	//It's not safe try to change
+	Point& getLoc();
 	void setLoc(const Point& p);
-	const bool getColor();
+	const int getColor();
+	void setColor(int color);
 	static int count;
+	void operator=(int x) {
+		this->m_name = x;
+	}
+
+	bool operator==(const Piece& p);
     
 
 private:
 
 	char m_name;
 	Point m_loc;
-	bool m_color;
+	int m_color;
 
 };
 

@@ -3,7 +3,89 @@
 #include "Piece.h"
 using namespace std;
 
+bool game(Grid grid) {
+
+	Piece King0(Point(1, 'E'), 'K', 0);
+	Piece King1(Point(8, 'E'), 'K', 1);
+
+
+	Point from(0, 0);
+	Point to(1, 1);
+
+	while (grid.onBoard(King0) && grid.onBoard(King1)) {
+
+		do {
+
+			grid.PrintGrid();
+
+			cout << "White's turn enter location from:" << "\n";
+			int x;
+			char y;
+			cout << "X coordinate:" << "\n";
+			cin >> x;
+			cout << "Y coordinate:" << "\n";
+			cin >> y;
+
+			from.m_x = x-1;
+			from.m_y = y-65;
+
+			cout << "White's turn enter location to:" << "\n";
+			cout << "X coordinate:" << "\n";
+			cin >> x;
+			cout << "Y coordinate:" << "\n";
+			cin >> y;
+
+			to.m_x = x - 1;
+			to.m_y = y-65;
+
+		} while (!grid.isValidMove(grid.getGrid(from), to,0) && !grid.canIEat(grid.getGrid(from),to,0));
+
+
+
+		
+
+		if (grid.onBoard(King0) && grid.onBoard(King1)) {
+
+			do {
+
+				grid.PrintGrid();
+
+				cout << "Black's turn enter location from:" << "\n";
+					int x;
+					char y;
+					cout << "X coordinate:" << "\n";
+					cin >> x;
+					cout << "Y coordinate:" << "\n";
+					cin >> y;
+
+					from.m_x = x - 1;
+					from.m_y = y - 65;
+
+					cout << "Black's turn enter location to:" << "\n";
+					cout << "X coordinate:" << "\n";
+					cin >> x;
+					cout << "Y coordinate:" << "\n";
+					cin >> y;
+
+					to.m_x = x - 1;
+					to.m_y = y - 65;
+
+			} while (!grid.isValidMove(grid.getGrid(from), to,1) && !grid.canIEat(grid.getGrid(from), to,1));
+
+		}
+		else {
+			cout << "White's won Congrats!";
+		}
+
+
+	}
+
+	return 0;
+}
+
+
 int main() {
+
 
 
 	Point a(3, 'A');
@@ -13,13 +95,7 @@ int main() {
 	Piece Horse(Point(1, 'B'), 'H', 0);
 	Piece Pawn(Point(2, 'D'), 'P', 0);
 	Grid A;
-	A.PrintGrid();
-	A.isValidMove(Pawn, Point(4, 'D'));
-	A.PrintGrid();
-	A.isValidMove(Queen, Point(3, 'D'));
-	A.PrintGrid();
-	A.isValidMove(Queen, Point(6, 'G'));
-	A.PrintGrid();
+	game(A);
 
 
 
