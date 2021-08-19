@@ -51,9 +51,9 @@ Grid::Grid()
 
 }
 
-Piece Grid::getGrid(Point p)
+Piece* Grid::getGrid(Point p)
 {
-	return *(m_grid[p.m_x][p.m_y]);
+	return m_grid[p.m_x][p.m_y];
 }
 
 
@@ -74,46 +74,46 @@ void Grid::PrintGrid()
 
 	for (int i = 0; i < 8; i++) {
 
-		cout << i + 1 << " ";
+cout << i + 1 << " ";
 
-		for (int j = 0; j < 8; j++) {
-			if (i >= 2 && i < 6) {
-				if (m_grid[i][j]->getName() != NULL) {
-					if (m_grid[i][j]->getColor() != 2) {
-						std::cout << "|" << m_grid[i][j]->getColor() << m_grid[i][j]->getName() << "|";
-					}
-					else {
-						std::cout << "|  |";
-					}
-				}
-				else {
-
-					std::cout << "|  |";
-				}
+for (int j = 0; j < 8; j++) {
+	if (i >= 2 && i < 6) {
+		if (m_grid[i][j]->getName() != NULL) {
+			if (m_grid[i][j]->getColor() != 2) {
+				std::cout << "|" << m_grid[i][j]->getColor() << m_grid[i][j]->getName() << "|";
 			}
 			else {
-				if (i <= 2) {
-					if (m_grid[i][j]->getName() != NULL) {
-						if (m_grid[i][j]->getColor() != 2) {
-							std::cout << "|" << m_grid[i][j]->getColor() << m_grid[i][j]->getName() << "|";
-						}
-						else {
-							std::cout << "|  |";
-						}
-					}
-					else {
-						std::cout << "|  |";
-					}
-				}
-				else if (i >= 6 && m_grid[i][j]->getName() != NULL) {
+				std::cout << "|  |";
+			}
+		}
+		else {
+
+			std::cout << "|  |";
+		}
+	}
+	else {
+		if (i <= 2) {
+			if (m_grid[i][j]->getName() != NULL) {
+				if (m_grid[i][j]->getColor() != 2) {
 					std::cout << "|" << m_grid[i][j]->getColor() << m_grid[i][j]->getName() << "|";
 				}
 				else {
 					std::cout << "|  |";
 				}
 			}
+			else {
+				std::cout << "|  |";
+			}
 		}
-		std::cout << '\n';
+		else if (i >= 6 && m_grid[i][j]->getName() != NULL) {
+			std::cout << "|" << m_grid[i][j]->getColor() << m_grid[i][j]->getName() << "|";
+		}
+		else {
+			std::cout << "|  |";
+		}
+	}
+}
+std::cout << '\n';
 	}
 
 }
@@ -133,11 +133,11 @@ bool Grid::onBoard(Piece& p)
 
 }
 
-void Grid::movePoints(Piece& f,  const Point& t)
+void Grid::movePoints(Piece& f, const Point& t)
 {
 
-	//Not good the last piece is wasted becausewe don't have a pointer to the memory of that.
-	
+	//Not good the last piece is wasted because we don't have a pointer to the memory of that.
+
 	this->m_grid[t.m_x][t.m_y] = new Piece(t, f.getName(), f.getColor());
 	this->m_grid[f.getLoc().m_x][f.getLoc().m_y]->setName(NULL);
 	this->m_grid[f.getLoc().m_x][f.getLoc().m_y]->setColor(2);
@@ -159,7 +159,7 @@ void Grid::movePointsEat(Piece& f, const Point& t, int color)
 		this->m_grid[f.getLoc().m_x][f.getLoc().m_y]->setColor(0);
 	}
 
-	
+
 	f.setLoc(t);
 
 
@@ -167,17 +167,37 @@ void Grid::movePointsEat(Piece& f, const Point& t, int color)
 }
 
 
-bool Grid::pawnCheck(Piece& p,  const Point& to) {
+bool Grid::pawnCheck(Piece& p, const Point& to) {
 
-	if (this->getGrid(to).getName() != NULL) {
+	if (this->getGrid(to)->getName() != NULL) {
 		return false;
 	}
 
 	if (p.getLoc().m_x == 1 || p.getLoc().m_x == 6) {
-		if (to.m_x == p.getLoc().m_x + 1 || to.m_x == p.getLoc().m_x + 2 || to.m_x == p.getLoc().m_x - 1 || to.m_x == p.getLoc().m_x - 2) {
+		if (p.getColor() == 0 && (p.getLoc().m_x + 1 == to.m_x || to.m_x == p.getLoc().m_x + 2) && p.getLoc().m_y == to.m_y) {
 			movePoints(p, to);
 			return true;
 		}
+
+
+		if (p.getColor() == 1 && (p.getLoc().m_x - 1 || to.m_x == p.getLoc().m_x - 2) && p.getLoc().m_y == to.m_y) {
+			movePoints(p, to);
+			return true;
+		}
+	}
+	else {
+
+		if (p.getColor() == 0 && (p.getLoc().m_x + 1 == to.m_x) && p.getLoc().m_y == to.m_y){
+			movePoints(p, to);
+			return true;
+		}
+		else {
+			if (p.getColor() == 1 && (p.getLoc().m_x -1 == to.m_x) && p.getLoc().m_y == to.m_y) {
+				movePoints(p, to);
+				return true;
+			}
+		}
+
 	}
 
 	return false;
@@ -190,13 +210,13 @@ bool Grid::rookCheck(Piece& p,  const Point& to) {
 	//Might be some Problems 
 		//TODO - Maybe to fix?
 
-	if (this->getGrid(to).getName() != NULL) {
+	if (this->getGrid(to)->getName() != NULL) {
 		return false;
 	}
 	if (to.m_y == p.getLoc().m_y || to.m_x == p.getLoc().m_x) {
 
 		for (int i = p.getLoc().m_x + 1; i < to.m_x; i++) {
-			if (m_grid[i][to.m_y] != NULL) {
+			if (m_grid[i][to.m_y]->getName() != NULL) {
 				return false;
 			}
 		}
@@ -215,7 +235,7 @@ bool Grid::horseCheck(Piece& p,  const Point& to) {
 
 	//The diffrences between the x and y values are always 1 or 2 thats the check later
 
-	if (this->getGrid(to).getName() != NULL && to.m_x >= 0 && to.m_x <= 8 && to.m_y >= 0 && to.m_y <= 8) {
+	if (this->getGrid(to)->getName() != NULL && to.m_x >= 0 && to.m_x <= 8 && to.m_y >= 0 && to.m_y <= 8) {
 		return false;
 	}
 
@@ -240,22 +260,24 @@ bool Grid::horseCheck(Piece& p,  const Point& to) {
 bool Grid::bishopCheck(Piece& p,  const Point& to) {
 
 	//Might be some Problems 
-		//TODO - Maybe to fix?
+	//TODO - To fix!
 
-	if (this->getGrid(to).getName() != NULL) {
+
+
+	if (this->getGrid(to)->getName() != NULL) {
 		return false;
 	}
 
-	int x_dist = abs(to.m_x - p.getLoc().m_x);
-	int y_dist = abs(to.m_y - p.getLoc().m_y);
+	int dist = abs(to.m_x - p.getLoc().m_x);
+
 
 
 		
 
-		if ((p.getLoc().m_x + x_dist == to.m_x && p.getLoc().m_y + y_dist == to.m_y) ||
-			(p.getLoc().m_x + x_dist == to.m_x && p.getLoc().m_y - y_dist == to.m_y) ||
-			(p.getLoc().m_x - x_dist == to.m_x && p.getLoc().m_y + y_dist == to.m_y) ||
-			(p.getLoc().m_x - x_dist == to.m_x && p.getLoc().m_y - y_dist == to.m_y)) {
+		if ((p.getLoc().m_x + dist == to.m_x && p.getLoc().m_y + dist == to.m_y) ||
+			(p.getLoc().m_x + dist == to.m_x && p.getLoc().m_y - dist == to.m_y) ||
+			(p.getLoc().m_x - dist == to.m_x && p.getLoc().m_y + dist == to.m_y) ||
+			(p.getLoc().m_x - dist == to.m_x && p.getLoc().m_y - dist == to.m_y)) {
 
 
 			if (to.m_x > p.getLoc().m_x) {
@@ -263,8 +285,8 @@ bool Grid::bishopCheck(Piece& p,  const Point& to) {
 				if (to.m_y > p.getLoc().m_y) {
 
 					int j = p.getLoc().m_y + 1;
-					for (int i = p.getLoc().m_x + 1; i < to.m_x, j < to.m_y; i++, j++) {
-						if (m_grid[i][j]->getName() != NULL) {
+					for (int i = p.getLoc().m_x + 1; i < to.m_x; i++, j++) {
+						if (m_grid[i][j]->getName() != NULL && j < to.m_y) {
 							return false;
 						}
 					}
@@ -328,7 +350,7 @@ bool Grid::bishopCheck(Piece& p,  const Point& to) {
 
 bool Grid::kingCheck(Piece& p,  const Point& to) {
 
-	if (this->getGrid(to).getName() != NULL) {
+	if (this->getGrid(to)->getName() != NULL) {
 		return false;
 	}
 
@@ -360,21 +382,29 @@ bool Grid::queenCheck(Piece& p,  const Point& to) {
 
 	return false;
 
-
-
-
 }
 
+
+//TODO: Fix eating backwards for white
 bool Grid::pawnEat(Piece& p, const Point& to, int color)
 {
 
-	if (this->getGrid(to).getName() != NULL && this->getGrid(to).getColor() == color) {
+	if (this->getGrid(to)->getName() == NULL && this->getGrid(to)->getColor() == color) {
 		return false;
 	}
 
-	if (p.getLoc().m_x-1 == to.m_x || p.getLoc().m_x + 1 == to.m_x || p.getLoc().m_y - 1 == to.m_y || p.getLoc().m_y + 1 == to.m_y) {
-			movePoints(p, to);
-			return true;
+	if ((p.getLoc().m_x + 1 == to.m_x && p.getLoc().m_y + 1 == to.m_y) || (p.getLoc().m_x + 1 == to.m_x && p.getLoc().m_y - 1 == to.m_y) && p.getColor() == 0) {
+
+		movePoints(p, to);
+		return true;
+
+	}
+
+	if(((p.getLoc().m_x - 1 == to.m_x && p.getLoc().m_y + 1 == to.m_y) || (p.getLoc().m_x - 1 == to.m_x && p.getLoc().m_y - 1 == to.m_y)) && p.getColor() == 1){
+
+		movePoints(p, to);
+		return true;
+
 	}
 
 	return false;
@@ -383,26 +413,270 @@ bool Grid::pawnEat(Piece& p, const Point& to, int color)
 
 bool Grid::rookEat(Piece& p, const Point& to, int color)
 {
+	if (this->getGrid(to)->getName() != NULL && this->getGrid(to)->getColor() == color) {
+		return false;
+	}
+
+	if (to.m_y == p.getLoc().m_y || to.m_x == p.getLoc().m_x) {
+
+		for (int i = p.getLoc().m_x + 1; i < to.m_x; i++) {
+			if (m_grid[i][to.m_y]->getName() != NULL) {
+				return false;
+			}
+		}
+
+		movePoints(p, to);
+		return true;
+	}
+
+
 	return false;
 }
 
 bool Grid::horseEat(Piece& p, const Point& to, int color)
 {
+
+
+	if (this->getGrid(to)->getName() != NULL && this->getGrid(to)->getColor() == color) {
+		return false;
+	}
+
+
+	if (abs(p.getLoc().m_x - to.m_x) > 2 || abs(p.getLoc().m_y - to.m_y) > 2) {
+		return false;
+	}
+
+	if ((to.m_x - 1 == p.getLoc().m_x || to.m_x - 2 == p.getLoc().m_x ||
+		to.m_x + 1 == p.getLoc().m_x || to.m_x + 2 == p.getLoc().m_x)
+		&& (to.m_y - 1 == p.getLoc().m_y || to.m_y - 2 == p.getLoc().m_y ||
+			to.m_y + 1 == p.getLoc().m_y || to.m_y + 2 == p.getLoc().m_y)) {
+
+		movePoints(p, to);
+		return true;
+
+	}
+
+
 	return false;
 }
 
 bool Grid::bishopEat(Piece& p, const Point& to,int color)
 {
+
+	if (this->getGrid(to)->getName() != NULL && this->getGrid(to)->getColor() == color) {
+		return false;
+	}
+
+	int dist = abs(to.m_x - p.getLoc().m_x);
+
+
+
+
+
+	if ((p.getLoc().m_x + dist == to.m_x && p.getLoc().m_y + dist == to.m_y) ||
+		(p.getLoc().m_x + dist == to.m_x && p.getLoc().m_y - dist == to.m_y) ||
+		(p.getLoc().m_x - dist == to.m_x && p.getLoc().m_y + dist == to.m_y) ||
+		(p.getLoc().m_x - dist == to.m_x && p.getLoc().m_y - dist == to.m_y)) {
+
+
+		if (to.m_x > p.getLoc().m_x) {
+
+			if (to.m_y > p.getLoc().m_y) {
+
+				int j = p.getLoc().m_y + 1;
+				for (int i = p.getLoc().m_x + 1; i < to.m_x, j < to.m_y; i++, j++) {
+					if (m_grid[i][j]->getName() != NULL) {
+						return false;
+					}
+				}
+
+			}
+			else {
+
+				int j = to.m_y;
+				for (int i = to.m_x; i != p.getLoc().m_x, j != p.getLoc().m_y; i--, j++) {
+					if (m_grid[i][j]->getName() != NULL) {
+						return false;
+					}
+				}
+
+
+
+			}
+			movePoints(p, to);
+			return true;
+
+
+		}
+
+		if (to.m_x < p.getLoc().m_x) {
+
+			if (to.m_y > p.getLoc().m_y) {
+
+				int j = p.getLoc().m_y + 1;
+				for (int i = p.getLoc().m_x - 1; i != to.m_x, j < to.m_y; i--, j++) {
+					if (m_grid[i][j]->getName() != NULL) {
+						return false;
+					}
+				}
+
+			}
+
+			else {
+
+				int j = to.m_y;
+				for (int i = to.m_x; i != p.getLoc().m_x, j != p.getLoc().m_y; i++, j++) {
+					if (m_grid[i][j]->getName() != NULL) {
+						return false;
+					}
+				}
+
+
+
+			}
+			movePoints(p, to);
+			return true;
+
+
+		}
+	}
+
+
+
 	return false;
 }
+
+
+//TODO: Add content
 
 bool Grid::kingEat(Piece& p, const Point& to, int color)
 {
+
+	if (this->getGrid(to)->getName() != NULL && this->getGrid(to)->getColor() == color) {
+		return false;
+	}
+
+	if ((to.m_x - 1 == p.getLoc().m_x || to.m_x == p.getLoc().m_x ||
+		to.m_x + 1 == p.getLoc().m_x || to.m_x == p.getLoc().m_x)
+		&& (to.m_y - 1 == p.getLoc().m_y || to.m_y == p.getLoc().m_y ||
+			to.m_y + 1 == p.getLoc().m_y || to.m_y == p.getLoc().m_y)) {
+
+		movePoints(p, to);
+		return true;
+
+	}
+
 	return false;
 }
 
+
+bool Grid::bishopEatForQueen(Piece& p, const Point& to, int color) {
+
+	int dist = abs(to.m_x - p.getLoc().m_x);
+
+	if ((p.getLoc().m_x + dist == to.m_x && p.getLoc().m_y + dist == to.m_y) ||
+		(p.getLoc().m_x + dist == to.m_x && p.getLoc().m_y - dist == to.m_y) ||
+		(p.getLoc().m_x - dist == to.m_x && p.getLoc().m_y + dist == to.m_y) ||
+		(p.getLoc().m_x - dist == to.m_x && p.getLoc().m_y - dist == to.m_y)) {
+
+
+		if (to.m_x > p.getLoc().m_x) {
+
+			if (to.m_y > p.getLoc().m_y) {
+
+				int j = p.getLoc().m_y + 1;
+				for (int i = p.getLoc().m_x + 1; i < to.m_x, j < to.m_y; i++, j++) {
+					if (m_grid[i][j]->getName() != NULL) {
+						return false;
+					}
+				}
+
+			}
+			else {
+
+				int j = to.m_y;
+				for (int i = to.m_x; i != p.getLoc().m_x, j != p.getLoc().m_y; i--, j++) {
+					if (m_grid[i][j]->getName() != NULL) {
+						return false;
+					}
+				}
+
+
+
+			}
+			movePoints(p, to);
+			return true;
+
+
+		}
+
+		if (to.m_x < p.getLoc().m_x) {
+
+			if (to.m_y > p.getLoc().m_y) {
+
+				int j = p.getLoc().m_y + 1;
+				for (int i = p.getLoc().m_x - 1; i != to.m_x, j < to.m_y; i--, j++) {
+					if (m_grid[i][j]->getName() != NULL) {
+						return false;
+					}
+				}
+
+			}
+
+			else {
+
+				int j = to.m_y;
+				for (int i = to.m_x; i != p.getLoc().m_x, j != p.getLoc().m_y; i++, j++) {
+					if (m_grid[i][j]->getName() != NULL) {
+						return false;
+					}
+				}
+
+
+
+			}
+
+			movePoints(p, to);
+			return true;
+
+		}
+	}
+
+
+	return false;
+
+}
+
+
+bool Grid::rookEatQueen(Piece& p, const Point& to, int color) {
+
+	if (to.m_y == p.getLoc().m_y || to.m_x == p.getLoc().m_x) {
+
+		for (int i = p.getLoc().m_x + 1; i < to.m_x; i++) {
+			if (m_grid[i][to.m_y]->getName() != NULL) {
+				return false;
+			}
+		}
+
+		movePoints(p, to);
+		return true;
+	}
+
+	return false;
+}
+
+//TODO: Add content
 bool Grid::queenEat(Piece& p, const Point& to, int color)
 {
+
+	if (this->getGrid(to)->getName() != NULL && this->getGrid(to)->getColor() == color) {
+		return false;
+	}
+
+	if (bishopEatForQueen(p, to, color) || rookEatQueen(p, to, color)) {
+		return true;
+	}
+
 	return false;
 }
 
@@ -431,10 +705,7 @@ bool Grid::isValidMove(Piece p,  const Point& to, int color)
 	}
 
 	if (p.getName() == 'H') {
-
-	
 		return horseCheck(p, to);
-
 	}
 
 
@@ -456,61 +727,42 @@ bool Grid::isValidMove(Piece p,  const Point& to, int color)
 
 	}
 
-
-
-
-
+	return false;
 	
 }
 
 bool Grid::canIEat(Piece p, const Point& to, int color)
 {
 
-
 	if (p.getColor() != color) {
 		return false;
 	}
 
-
 	if (p.getName() == 'P') {
-
 		return pawnEat(p, to, color);
-
 	}
 
 	if (p.getName() == 'R') {
-
 		return rookEat(p, to, color);
-
 	}
 
 	if (p.getName() == 'H') {
-
-
 		return horseEat(p, to, color);
-
 	}
 
-
 	if (p.getName() == 'B') {
-
 		return bishopEat(p, to, color);
-
 	}
 
 	if (p.getName() == 'K') {
-
 		return kingEat(p, to, color);
-
 	}
 
 	if (p.getName() == 'Q') {
 
 		return queenEat(p, to, color);
-
-
-
-
 		return false;
 	}
+
+	return false;
 }

@@ -9,7 +9,7 @@ public:
 	Grid(); // Default Ctor
 
 public:
-	Piece getGrid(Point p);
+	Piece* getGrid(Point p);
 	void setGrid(Point& p, Piece& s); // The ch is the char that the place will be set to.
 	void PrintGrid();
 	bool onBoard(Piece& p);
@@ -32,6 +32,8 @@ public:
 	bool horseEat(Piece& p, const Point& to, int color);
 	bool bishopEat(Piece& p, const Point& to, int color);
 	bool kingEat(Piece& p, const Point& to, int color);
+	bool bishopEatForQueen(Piece& p, const Point& to, int color);
+	bool rookEatQueen(Piece& p, const Point& to, int color);
 	bool queenEat(Piece& p, const Point& to, int color);
 	
 	

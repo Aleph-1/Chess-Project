@@ -3,6 +3,8 @@
 #include "Piece.h"
 using namespace std;
 
+//TODO: Add black won cout
+
 bool game(Grid grid) {
 
 	Piece King0(Point(1, 'E'), 'K', 0);
@@ -38,11 +40,9 @@ bool game(Grid grid) {
 			to.m_x = x - 1;
 			to.m_y = y-65;
 
-		} while (!grid.isValidMove(grid.getGrid(from), to,0) && !grid.canIEat(grid.getGrid(from),to,0));
-
-
-
+		} while (!grid.isValidMove(*(grid.getGrid(from)), to,0) && !grid.canIEat(*(grid.getGrid(from)),to,0));
 		
+
 
 		if (grid.onBoard(King0) && grid.onBoard(King1)) {
 
@@ -70,7 +70,7 @@ bool game(Grid grid) {
 					to.m_x = x - 1;
 					to.m_y = y - 65;
 
-			} while (!grid.isValidMove(grid.getGrid(from), to,1) && !grid.canIEat(grid.getGrid(from), to,1));
+			} while (!grid.isValidMove(*(grid.getGrid(from)), to,1) && !grid.canIEat(*(grid.getGrid(from)), to,1));
 
 		}
 		else {
@@ -85,8 +85,6 @@ bool game(Grid grid) {
 
 
 int main() {
-
-
 
 	Point a(3, 'A');
 	Piece Queen(Point(1, 'D'), 'Q', 0);

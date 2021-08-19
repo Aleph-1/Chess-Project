@@ -41,8 +41,6 @@ Point& Piece::getLoc()
 {
 
 	return m_loc;
-
-	// TODO: insert return statement here
 }
 
 void Piece::setLoc(const Point& p)
@@ -64,7 +62,7 @@ void Piece::setColor(int color)
 bool Piece::operator==(const Piece& p)
 {
 	
-	if (m_name == p.m_name && m_loc == p.m_loc && m_color == p.m_color) {
+	if (m_name == p.m_name && m_color == p.m_color) {
 		return true;
 	}
 
