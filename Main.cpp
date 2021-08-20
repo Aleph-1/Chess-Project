@@ -73,8 +73,13 @@ bool game(Grid grid) {
 			} while (!grid.isValidMove(*(grid.getGrid(from)), to,1) && !grid.canIEat(*(grid.getGrid(from)), to,1));
 
 		}
-		else {
-			cout << "White's won Congrats!";
+
+		if (!grid.onBoard(King0)) {
+			cout << "Black's Won Congrats!";
+		}
+
+		if(!grid.onBoard(King1)){
+			cout << "White's Won Congrats!";
 		}
 
 

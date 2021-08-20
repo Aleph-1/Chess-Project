@@ -315,7 +315,7 @@ bool Grid::bishopCheck(Piece& p,  const Point& to) {
 				if (to.m_y > p.getLoc().m_y) {
 
 					int j = p.getLoc().m_y + 1;
-					for (int i = p.getLoc().m_x - 1; i != to.m_x, j < to.m_y; i--, j++) {
+					for (int i = p.getLoc().m_x - 1; i != to.m_x && j < to.m_y; i--, j++) {
 						if (m_grid[i][j]->getName() != NULL) {
 							return false;
 						}
@@ -368,7 +368,7 @@ bool Grid::kingCheck(Piece& p,  const Point& to) {
 
 }
 
-bool Grid::queenCheck(Piece& p,  const Point& to) {
+bool Grid::queenCheck(Piece& p, const Point& to) {
 
 
 	if (rookCheck(p, to)) {
@@ -384,12 +384,10 @@ bool Grid::queenCheck(Piece& p,  const Point& to) {
 
 }
 
-
-//TODO: Fix eating backwards for white
 bool Grid::pawnEat(Piece& p, const Point& to, int color)
 {
 
-	if (this->getGrid(to)->getName() == NULL && this->getGrid(to)->getColor() == color) {
+	if (this->getGrid(to)->getName() == NULL && this->getGrid(to)->getColor() == p.getColor()) {
 		return false;
 	}
 
@@ -413,7 +411,7 @@ bool Grid::pawnEat(Piece& p, const Point& to, int color)
 
 bool Grid::rookEat(Piece& p, const Point& to, int color)
 {
-	if (this->getGrid(to)->getName() != NULL && this->getGrid(to)->getColor() == color) {
+	if (this->getGrid(to)->getName() != NULL && this->getGrid(to)->getColor() == p.getColor()) {
 		return false;
 	}
 
@@ -437,7 +435,7 @@ bool Grid::horseEat(Piece& p, const Point& to, int color)
 {
 
 
-	if (this->getGrid(to)->getName() != NULL && this->getGrid(to)->getColor() == color) {
+	if (this->getGrid(to)->getName() != NULL && this->getGrid(to)->getColor() == p.getColor()) {
 		return false;
 	}
 
@@ -463,14 +461,11 @@ bool Grid::horseEat(Piece& p, const Point& to, int color)
 bool Grid::bishopEat(Piece& p, const Point& to,int color)
 {
 
-	if (this->getGrid(to)->getName() != NULL && this->getGrid(to)->getColor() == color) {
+	if (this->getGrid(to)->getName() != NULL && p.getColor() == this->getGrid(to)->getColor()) {
 		return false;
 	}
 
 	int dist = abs(to.m_x - p.getLoc().m_x);
-
-
-
 
 
 	if ((p.getLoc().m_x + dist == to.m_x && p.getLoc().m_y + dist == to.m_y) ||
@@ -484,7 +479,7 @@ bool Grid::bishopEat(Piece& p, const Point& to,int color)
 			if (to.m_y > p.getLoc().m_y) {
 
 				int j = p.getLoc().m_y + 1;
-				for (int i = p.getLoc().m_x + 1; i < to.m_x, j < to.m_y; i++, j++) {
+				for (int i = p.getLoc().m_x + 1; i < to.m_x && j < to.m_y; i++, j++) {
 					if (m_grid[i][j]->getName() != NULL) {
 						return false;
 					}
@@ -514,7 +509,7 @@ bool Grid::bishopEat(Piece& p, const Point& to,int color)
 			if (to.m_y > p.getLoc().m_y) {
 
 				int j = p.getLoc().m_y + 1;
-				for (int i = p.getLoc().m_x - 1; i != to.m_x, j < to.m_y; i--, j++) {
+				for (int i = p.getLoc().m_x - 1; i != to.m_x && j < to.m_y; i--, j++) {
 					if (m_grid[i][j]->getName() != NULL) {
 						return false;
 					}
@@ -552,7 +547,7 @@ bool Grid::bishopEat(Piece& p, const Point& to,int color)
 bool Grid::kingEat(Piece& p, const Point& to, int color)
 {
 
-	if (this->getGrid(to)->getName() != NULL && this->getGrid(to)->getColor() == color) {
+	if (this->getGrid(to)->getName() != NULL && this->getGrid(to)->getColor() == p.getColor()) {
 		return false;
 	}
 
@@ -585,7 +580,7 @@ bool Grid::bishopEatForQueen(Piece& p, const Point& to, int color) {
 			if (to.m_y > p.getLoc().m_y) {
 
 				int j = p.getLoc().m_y + 1;
-				for (int i = p.getLoc().m_x + 1; i < to.m_x, j < to.m_y; i++, j++) {
+				for (int i = p.getLoc().m_x + 1; i < to.m_x && j < to.m_y; i++, j++) {
 					if (m_grid[i][j]->getName() != NULL) {
 						return false;
 					}
@@ -615,7 +610,7 @@ bool Grid::bishopEatForQueen(Piece& p, const Point& to, int color) {
 			if (to.m_y > p.getLoc().m_y) {
 
 				int j = p.getLoc().m_y + 1;
-				for (int i = p.getLoc().m_x - 1; i != to.m_x, j < to.m_y; i--, j++) {
+				for (int i = p.getLoc().m_x - 1; i != to.m_x && j < to.m_y; i--, j++) {
 					if (m_grid[i][j]->getName() != NULL) {
 						return false;
 					}
@@ -669,7 +664,7 @@ bool Grid::rookEatQueen(Piece& p, const Point& to, int color) {
 bool Grid::queenEat(Piece& p, const Point& to, int color)
 {
 
-	if (this->getGrid(to)->getName() != NULL && this->getGrid(to)->getColor() == color) {
+	if (this->getGrid(to)->getName() != NULL && this->getGrid(to)->getColor() == p.getColor()) {
 		return false;
 	}
 
@@ -734,7 +729,7 @@ bool Grid::isValidMove(Piece p,  const Point& to, int color)
 bool Grid::canIEat(Piece p, const Point& to, int color)
 {
 
-	if (p.getColor() != color) {
+	if (p.getColor() == this->getGrid(to)->getColor() || p.getColor() != color){
 		return false;
 	}
 
@@ -761,8 +756,8 @@ bool Grid::canIEat(Piece p, const Point& to, int color)
 	if (p.getName() == 'Q') {
 
 		return queenEat(p, to, color);
-		return false;
 	}
 
 	return false;
 }
+
