@@ -163,7 +163,6 @@ void Grid::movePointsEat(Piece& f, const Point& t, int color)
 	f.setLoc(t);
 
 
-
 }
 
 
