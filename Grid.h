@@ -17,7 +17,8 @@ public:
 	void movePointsEat(Piece& f, const Point& t, int color);
 	bool isValidMove(Piece p, const Point& to, int color);
 	bool canIEat(Piece p, const Point& to, int color);
-
+	bool isPossibleCastling(Piece p, const Point& to,int color);
+	void switchPoints(Piece& f, const Point& t);
 
 public:
 	bool pawnCheck(Piece& p, const Point& to);

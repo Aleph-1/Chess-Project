@@ -15,6 +15,7 @@ Grid::Grid()
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
 			*(m_grid[i][j]) = NULL;
+			m_grid[i][j]->setColor(2);
 		}
 	}
 
@@ -130,6 +131,16 @@ bool Grid::onBoard(Piece& p)
 	}
 
 	return false;
+
+}
+
+void Grid::switchPoints(Piece& f, const Point& t) {
+
+
+	Piece temp = *(this->m_grid[t.m_x][t.m_y]);
+	this->m_grid[t.m_x][t.m_y] = new Piece(t, f.getName(), f.getColor());
+	this->m_grid[f.getLoc().m_x][f.getLoc().m_y]->setName(temp.getName());
+	this->m_grid[f.getLoc().m_x][f.getLoc().m_y]->setColor(temp.getColor());
 
 }
 
@@ -541,8 +552,6 @@ bool Grid::bishopEat(Piece& p, const Point& to,int color)
 }
 
 
-//TODO: Add content
-
 bool Grid::kingEat(Piece& p, const Point& to, int color)
 {
 
@@ -685,7 +694,6 @@ bool Grid::isValidMove(Piece p,  const Point& to, int color)
 		return false;
 	}
 
-
 	if (p.getName() == 'P') {
 
 		return pawnCheck(p, to);
@@ -711,7 +719,9 @@ bool Grid::isValidMove(Piece p,  const Point& to, int color)
 
 	if (p.getName() == 'K') {
 
-		return kingCheck(p, to);
+		if (kingCheck(p, to) || isPossibleCastling(p, to, color)) {
+			return true;
+		}
 
 	}
 
@@ -749,13 +759,71 @@ bool Grid::canIEat(Piece p, const Point& to, int color)
 	}
 
 	if (p.getName() == 'K') {
+
 		return kingEat(p, to, color);
+		
 	}
 
 	if (p.getName() == 'Q') {
 
 		return queenEat(p, to, color);
 	}
+
+	return false;
+}
+
+bool Grid::isPossibleCastling(Piece p, const Point& to, int color)
+{
+	if (color == 0 && (getGrid(Point(1, 'A'))->getName() == 'R' || getGrid(Point(1, 'H'))->getName() == 'R') && getGrid(Point(1, 'E'))->getName() == 'K') {
+
+		if (to == Point(1, 'A')) {
+
+			for (int i = 3; i > 0; i--) {
+				if (m_grid[0][i]->getName() != NULL) {
+					return false;
+				}
+			}
+		}
+
+		if (to == Point(1, 'H')) {
+
+			for (int i = 5; i < 8; i++) {
+				if (m_grid[0][i]->getName() != NULL) {
+					return false;
+				}
+			}
+		}
+
+
+		switchPoints(p, to);
+		return true;
+
+	}
+
+	if (color == 1 && (getGrid(Point(8, 'A'))->getName() == 'R' || getGrid(Point(8, 'H'))->getName() == 'R') && getGrid(Point(8, 'E'))->getName() == 'K') {
+
+		if (to == Point(8,'H')){
+			for (int i = 5; i < 7; i++) {
+				if (m_grid[7][i]->getName() != NULL) {
+					return false;
+				}
+			}
+		}
+
+		else if (to == Point(8,'A')){
+			for (int i = 3; i > 0; i--) {
+				if (m_grid[7][i]->getName() != NULL) {
+					return false;
+				}
+			}
+		}
+
+		switchPoints(p, to);
+		return true;
+
+	}
+
+
 
 	return false;
 }

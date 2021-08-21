@@ -18,7 +18,7 @@ Point& Point::operator=(const Point& p)
 	return *this;
 }
 
-bool Point::operator==(const Point& p)
+bool Point::operator==(const Point& p) const
 {
 
 	if (m_x == p.m_x && m_y == p.m_y) {
