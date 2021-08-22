@@ -134,6 +134,19 @@ bool Grid::onBoard(Piece& p)
 
 }
 
+const Point& Grid::getLocPiece(char Name, int color)
+{
+
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 8; j++) {
+			if (m_grid[i][j]->getName() == Name && m_grid[i][j]->getColor() == color) {
+				return Point(i + 1, j + 65);
+			}
+		}
+	}
+
+}
+
 void Grid::switchPoints(Piece& f, const Point& t) {
 
 
@@ -142,6 +155,91 @@ void Grid::switchPoints(Piece& f, const Point& t) {
 	this->m_grid[f.getLoc().m_x][f.getLoc().m_y]->setName(temp.getName());
 	this->m_grid[f.getLoc().m_x][f.getLoc().m_y]->setColor(temp.getColor());
 
+}
+
+bool Grid::canIEatWithoutChange(Piece p, const Point& to, int color)
+{
+	if (p.getColor() == this->getGrid(to)->getColor() || p.getColor() != color) {
+		return false;
+	}
+
+	if (p.getName() == 'P') {
+
+		return pawnEat(p, to, color);
+
+	}
+
+	if (p.getName() == 'R') {
+
+		return rookEat(p, to, color);
+
+		return true;
+	}
+
+	if (p.getName() == 'H') {
+	
+		return horseEat(p, to, color);
+
+		return true;
+	}
+
+	if (p.getName() == 'B') {
+	
+		return bishopEat(p, to, color);
+
+	}
+
+	if (p.getName() == 'K') {
+
+		return kingEat(p, to, color);
+
+	}
+
+	if (p.getName() == 'Q') {
+
+		return queenEat(p,to,color);
+
+	}
+
+	return false;
+
+}
+
+
+//TODO: Basically make the function not use movePoints then apply the semi checkEat on it same logic tho
+bool Grid::isCheck(Piece p, const Point& to, int color)
+{
+	if (isValidMove(p, to, color)) {
+		
+	}
+	else {
+		movePoints(*getGrid(to), p.getLoc());
+		return false;
+	}
+
+	Point whiteKing = getLocPiece('K', 0);
+	Point blackKing = getLocPiece('K', 1);
+
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 8; j++) {
+			if (m_grid[i][j]->getColor() != color) {
+				if (canIEatWithoutChange(*getGrid(Point(i + 1, j + 65)), whiteKing, getGrid(Point(i + 1, j + 65))->getColor())) {
+					movePoints(*getGrid(to), p.getLoc());
+					return true;
+				}
+				
+				if (canIEatWithoutChange(*getGrid(Point(i + 1, j + 65)), blackKing, getGrid(Point(i + 1, j + 65))->getColor())) {
+					movePoints(*getGrid(to), p.getLoc());
+					return true;
+				}
+
+			}
+		}
+	}
+
+	movePoints(*getGrid(to), p.getLoc());
+
+	return false;
 }
 
 void Grid::movePoints(Piece& f, const Point& t)
@@ -185,25 +283,21 @@ bool Grid::pawnCheck(Piece& p, const Point& to) {
 
 	if (p.getLoc().m_x == 1 || p.getLoc().m_x == 6) {
 		if (p.getColor() == 0 && (p.getLoc().m_x + 1 == to.m_x || to.m_x == p.getLoc().m_x + 2) && p.getLoc().m_y == to.m_y) {
-			movePoints(p, to);
 			return true;
 		}
 
 
 		if (p.getColor() == 1 && (p.getLoc().m_x - 1 || to.m_x == p.getLoc().m_x - 2) && p.getLoc().m_y == to.m_y) {
-			movePoints(p, to);
 			return true;
 		}
 	}
 	else {
 
 		if (p.getColor() == 0 && (p.getLoc().m_x + 1 == to.m_x) && p.getLoc().m_y == to.m_y){
-			movePoints(p, to);
 			return true;
 		}
 		else {
 			if (p.getColor() == 1 && (p.getLoc().m_x -1 == to.m_x) && p.getLoc().m_y == to.m_y) {
-				movePoints(p, to);
 				return true;
 			}
 		}
@@ -223,19 +317,53 @@ bool Grid::rookCheck(Piece& p,  const Point& to) {
 	if (this->getGrid(to)->getName() != NULL) {
 		return false;
 	}
-	if (to.m_y == p.getLoc().m_y || to.m_x == p.getLoc().m_x) {
+	if (p.getColor() == 0) {
+		if (to.m_y == p.getLoc().m_y) {
 
-		for (int i = p.getLoc().m_x + 1; i < to.m_x; i++) {
-			if (m_grid[i][to.m_y]->getName() != NULL) {
-				return false;
+			for (int i = p.getLoc().m_x + 1; i < to.m_x; i++) {
+				if (m_grid[to.m_y][i]->getName() != NULL) {
+					return false;
+				}
 			}
-		}
 
-		movePoints(p, to);
-		return true;
+			return true;
+		}
+		if (to.m_x == p.getLoc().m_x) {
+
+			for (int i = p.getLoc().m_x + 1; i < to.m_x; i++) {
+				if (m_grid[i][to.m_x]->getName() != NULL) {
+					return false;
+				}
+			}
+			return true;
+		}
 	}
 
+	if (p.getColor() == 1) {
+		if (to.m_y == p.getLoc().m_y) {
+
+			for (int i = p.getLoc().m_x - 1; i != to.m_x; i--) {
+				if (m_grid[to.m_y][i]->getName() != NULL) {
+					return false;
+				}
+			}
+
+			return true;
+		}
+		if (to.m_x == p.getLoc().m_x) {
+
+			for (int i = p.getLoc().m_x - 1; i != to.m_x; i--) {
+				if (m_grid[i][to.m_x]->getName() != NULL) {
+					return false;
+				}
+			}
+			return true;
+		}
+	}
+
+
 	return false;
+
 
 }
 
@@ -258,7 +386,6 @@ bool Grid::horseCheck(Piece& p,  const Point& to) {
 		&& (to.m_y - 1 == p.getLoc().m_y || to.m_y - 2 == p.getLoc().m_y ||
 			to.m_y + 1 == p.getLoc().m_y || to.m_y + 2 == p.getLoc().m_y)) {
 
-		movePoints(p, to);
 		return true;
 
 	}
@@ -279,10 +406,6 @@ bool Grid::bishopCheck(Piece& p,  const Point& to) {
 	}
 
 	int dist = abs(to.m_x - p.getLoc().m_x);
-
-
-
-		
 
 		if ((p.getLoc().m_x + dist == to.m_x && p.getLoc().m_y + dist == to.m_y) ||
 			(p.getLoc().m_x + dist == to.m_x && p.getLoc().m_y - dist == to.m_y) ||
@@ -314,7 +437,6 @@ bool Grid::bishopCheck(Piece& p,  const Point& to) {
 
 
 				}
-				movePoints(p, to);
 				return true;
 
 
@@ -345,15 +467,12 @@ bool Grid::bishopCheck(Piece& p,  const Point& to) {
 
 
 				}
-				movePoints(p, to);
 				return true;
 
 
 			}
 		}
 			
-
-
 	return false;
 
 }
@@ -369,7 +488,6 @@ bool Grid::kingCheck(Piece& p,  const Point& to) {
 		&& (to.m_y - 1 == p.getLoc().m_y || to.m_y == p.getLoc().m_y ||
 			to.m_y + 1 == p.getLoc().m_y || to.m_y == p.getLoc().m_y)) {
 
-		movePoints(p, to);
 		return true;
 
 	}
@@ -403,14 +521,12 @@ bool Grid::pawnEat(Piece& p, const Point& to, int color)
 
 	if ((p.getLoc().m_x + 1 == to.m_x && p.getLoc().m_y + 1 == to.m_y) || (p.getLoc().m_x + 1 == to.m_x && p.getLoc().m_y - 1 == to.m_y) && p.getColor() == 0) {
 
-		movePoints(p, to);
 		return true;
 
 	}
 
 	if(((p.getLoc().m_x - 1 == to.m_x && p.getLoc().m_y + 1 == to.m_y) || (p.getLoc().m_x - 1 == to.m_x && p.getLoc().m_y - 1 == to.m_y)) && p.getColor() == 1){
 
-		movePoints(p, to);
 		return true;
 
 	}
@@ -433,7 +549,6 @@ bool Grid::rookEat(Piece& p, const Point& to, int color)
 			}
 		}
 
-		movePoints(p, to);
 		return true;
 	}
 
@@ -459,7 +574,6 @@ bool Grid::horseEat(Piece& p, const Point& to, int color)
 		&& (to.m_y - 1 == p.getLoc().m_y || to.m_y - 2 == p.getLoc().m_y ||
 			to.m_y + 1 == p.getLoc().m_y || to.m_y + 2 == p.getLoc().m_y)) {
 
-		movePoints(p, to);
 		return true;
 
 	}
@@ -508,7 +622,7 @@ bool Grid::bishopEat(Piece& p, const Point& to,int color)
 
 
 			}
-			movePoints(p, to);
+
 			return true;
 
 
@@ -539,7 +653,7 @@ bool Grid::bishopEat(Piece& p, const Point& to,int color)
 
 
 			}
-			movePoints(p, to);
+
 			return true;
 
 
@@ -564,7 +678,6 @@ bool Grid::kingEat(Piece& p, const Point& to, int color)
 		&& (to.m_y - 1 == p.getLoc().m_y || to.m_y == p.getLoc().m_y ||
 			to.m_y + 1 == p.getLoc().m_y || to.m_y == p.getLoc().m_y)) {
 
-		movePoints(p, to);
 		return true;
 
 	}
@@ -607,7 +720,7 @@ bool Grid::bishopEatForQueen(Piece& p, const Point& to, int color) {
 
 
 			}
-			movePoints(p, to);
+
 			return true;
 
 
@@ -628,8 +741,8 @@ bool Grid::bishopEatForQueen(Piece& p, const Point& to, int color) {
 
 			else {
 
-				int j = to.m_y;
-				for (int i = to.m_x; i != p.getLoc().m_x, j != p.getLoc().m_y; i++, j++) {
+				int j = to.m_y+1;
+				for (int i = to.m_x+1; i != p.getLoc().m_x, j != p.getLoc().m_y; i++, j++) {
 					if (m_grid[i][j]->getName() != NULL) {
 						return false;
 					}
@@ -639,7 +752,6 @@ bool Grid::bishopEatForQueen(Piece& p, const Point& to, int color) {
 
 			}
 
-			movePoints(p, to);
 			return true;
 
 		}
@@ -653,17 +765,50 @@ bool Grid::bishopEatForQueen(Piece& p, const Point& to, int color) {
 
 bool Grid::rookEatQueen(Piece& p, const Point& to, int color) {
 
-	if (to.m_y == p.getLoc().m_y || to.m_x == p.getLoc().m_x) {
+	if (color == 0) {
+		if (to.m_y == p.getLoc().m_y) {
 
-		for (int i = p.getLoc().m_x + 1; i < to.m_x; i++) {
-			if (m_grid[i][to.m_y]->getName() != NULL) {
-				return false;
+			for (int i = p.getLoc().m_x + 1; i < to.m_x; i++) {
+				if (m_grid[to.m_y][i]->getName() != NULL) {
+					return false;
+				}
 			}
-		}
 
-		movePoints(p, to);
-		return true;
+			return true;
+		}
+		if (to.m_x == p.getLoc().m_x) {
+
+			for (int i = p.getLoc().m_x + 1; i < to.m_x; i++) {
+				if (m_grid[i][to.m_x]->getName() != NULL) {
+					return false;
+				}
+			}
+			return true;
+		}
 	}
+
+	if (color == 1) {
+		if (to.m_y == p.getLoc().m_y) {
+
+			for (int i = p.getLoc().m_x -1; i != to.m_x; i--) {
+				if (m_grid[to.m_y][i]->getName() != NULL) {
+					return false;
+				}
+			}
+
+			return true;
+		}
+		if (to.m_x == p.getLoc().m_x) {
+
+			for (int i = p.getLoc().m_x - 1; i != to.m_x; i--) {
+				if (m_grid[i][to.m_x]->getName() != NULL) {
+					return false;
+				}
+			}
+			return true;
+		}
+	}
+
 
 	return false;
 }
@@ -696,44 +841,57 @@ bool Grid::isValidMove(Piece p,  const Point& to, int color)
 
 	if (p.getName() == 'P') {
 
-		return pawnCheck(p, to);
-
+		if (pawnCheck(p, to)) {
+			movePoints(p, to);
+		}
+		return true;
 	}
 
 	if (p.getName() == 'R') {
 
-		return rookCheck(p, to);
-
+		if (rookCheck(p, to)) {
+			movePoints(p, to);
+		}
+		return true;
 	}
 
 	if (p.getName() == 'H') {
-		return horseCheck(p, to);
+
+		if (horseCheck(p, to)) {
+			movePoints(p, to);
+		}
+		return true;
 	}
 
 
 	if (p.getName() == 'B') {
 
-		return bishopCheck(p, to);
-
+		if (bishopCheck(p, to)) {
+			movePoints(p, to);
+		 }
+		return true;
 	}
 
 	if (p.getName() == 'K') {
 
 		if (kingCheck(p, to) || isPossibleCastling(p, to, color)) {
-			return true;
+			movePoints(p, to);
 		}
-
+		return true;
 	}
 
 	if (p.getName() == 'Q') {
 
-		return queenCheck(p, to);
-
+		if (queenCheck(p, to)) {
+			movePoints(p, to);
+		}
+		return true;
 	}
 
 	return false;
 	
 }
+
 
 bool Grid::canIEat(Piece p, const Point& to, int color)
 {
@@ -743,30 +901,57 @@ bool Grid::canIEat(Piece p, const Point& to, int color)
 	}
 
 	if (p.getName() == 'P') {
-		return pawnEat(p, to, color);
+		
+		if (pawnEat(p, to, color)) {
+			movePoints(p, to);
+		}
+
+		return true;
+
 	}
 
 	if (p.getName() == 'R') {
-		return rookEat(p, to, color);
+
+		if (rookEat(p, to, color)) {
+			movePoints(p, to);
+		}
+
+		return true;
 	}
 
 	if (p.getName() == 'H') {
-		return horseEat(p, to, color);
+		if (horseEat(p, to, color)) {
+			movePoints(p, to);
+		}
+
+		return true;
 	}
 
 	if (p.getName() == 'B') {
-		return bishopEat(p, to, color);
+		if (bishopEat(p, to, color)) {
+			movePoints(p, to);
+		}
+
+		return true;
 	}
 
 	if (p.getName() == 'K') {
 
-		return kingEat(p, to, color);
+		if (kingEat(p, to, color)) {
+			movePoints(p, to);
+		}
+
+		return true;
 		
 	}
 
 	if (p.getName() == 'Q') {
 
-		return queenEat(p, to, color);
+		if (queenEat(p, to, color)) {
+			movePoints(p, to);
+		}
+
+		return true;
 	}
 
 	return false;

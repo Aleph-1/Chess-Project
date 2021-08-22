@@ -13,8 +13,14 @@ bool game(Grid grid) {
 
 	Point from(0, 0);
 	Point to(1, 1);
+	bool isValidMoveSuc = false; // Is valid move succesful
+	bool canIEatSuc = false;
+	bool check; // Check if there's not any check
+	bool all = false;
 
 	while (grid.onBoard(King0) && grid.onBoard(King1)) {
+
+		check = false;
 
 		do {
 
@@ -40,9 +46,25 @@ bool game(Grid grid) {
 			to.m_x = x - 1;
 			to.m_y = y-65;
 
-		} while (!grid.isValidMove(*(grid.getGrid(from)), to,0) && !grid.canIEat(*(grid.getGrid(from)),to,0));
-		
 
+			
+			if (grid.isCheck(*(grid.getGrid(from)),to,0)) {
+				cout << "Check On White!"  << endl;
+				check = true;
+			}
+		
+			if (!check) {
+				isValidMoveSuc = grid.isValidMove(*(grid.getGrid(from)), to, 0);
+			}
+
+			if (!check) {
+				canIEatSuc = grid.canIEat(*(grid.getGrid(from)), to, 0);
+			}
+
+
+		} while ( (!isValidMoveSuc && !canIEatSuc) || check);
+		
+		check = false;
 
 		if (grid.onBoard(King0) && grid.onBoard(King1)) {
 
@@ -69,8 +91,23 @@ bool game(Grid grid) {
 
 					to.m_x = x - 1;
 					to.m_y = y - 65;
+					
+					
+					if (grid.isCheck(*(grid.getGrid(from)), to, 1)) {
+						cout << "Check On Black!" << endl;
+						check = true;
+					}
 
-			} while (!grid.isValidMove(*(grid.getGrid(from)), to,1) && !grid.canIEat(*(grid.getGrid(from)), to,1));
+					if (!check) {
+						isValidMoveSuc = grid.isValidMove(*(grid.getGrid(from)), to, 1);
+					}
+
+					if (!check) {
+						canIEatSuc = grid.canIEat(*(grid.getGrid(from)), to, 1);
+					}
+
+
+			} while ((!isValidMoveSuc && !canIEatSuc) || check);
 
 		}
 
@@ -88,7 +125,6 @@ bool game(Grid grid) {
 	return 0;
 }
 
-
 int main() {
 
 	Point a(3, 'A');
@@ -99,30 +135,5 @@ int main() {
 	Piece Pawn(Point(2, 'D'), 'P', 0);
 	Grid A;
 	game(A);
-
-
-
-
-	/*
-	A.isValidMove(Pawn, Point(4,'E'));
-	A.PrintGrid();
-	A.isValidMove(King, Point(2, 'E'));
-	A.PrintGrid();
-	A.isValidMove(King, Point(3, 'E'));
-	A.PrintGrid();
-	A.isValidMove(King, Point(3, 'F'));
-	A.PrintGrid();
-	A.isValidMove(King, Point(2, 'F'));
-	A.PrintGrid();
-	A.isValidMove(Horse, Point(3, 'C'));
-	A.PrintGrid();
-	A.isValidMove(Horse, Point(4, 'E'));
-	A.PrintGrid();
-	*/
-
-
-
-	
-
 
 }

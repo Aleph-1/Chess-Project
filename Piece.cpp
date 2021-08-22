@@ -22,8 +22,6 @@ Piece::Piece(const Piece& p) : m_loc(p.m_loc)
 
 }
 
-
-
 const char Piece::getName()
 {
 
@@ -69,4 +67,3 @@ bool Piece::operator==(const Piece& p)
 	return false;
 
 }
-
