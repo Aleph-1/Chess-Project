@@ -34,7 +34,6 @@ public:
 	bool rookEat(Piece& p, const Point& to, int color);
 	bool horseEat(Piece& p, const Point& to, int color);
 	bool bishopEat(Piece& p, const Point& to, int color);
-	bool kingCheckEat(Piece& p, const Point& to, int color);
 	bool kingEat(Piece& p, const Point& to, int color);
 	bool bishopEatForQueen(Piece& p, const Point& to, int color);
 	bool rookEatQueen(Piece& p, const Point& to, int color);

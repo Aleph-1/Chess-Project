@@ -213,7 +213,6 @@ bool Grid::isCheck(Piece p, const Point& to, int color)
 		
 	}
 	else {
-		movePoints(*getGrid(to), p.getLoc());
 		return false;
 	}
 
@@ -843,24 +842,27 @@ bool Grid::isValidMove(Piece p,  const Point& to, int color)
 
 		if (pawnCheck(p, to)) {
 			movePoints(p, to);
+			return true;
 		}
-		return true;
+		
 	}
 
 	if (p.getName() == 'R') {
 
 		if (rookCheck(p, to)) {
 			movePoints(p, to);
+			return true;
 		}
-		return true;
+		
 	}
 
 	if (p.getName() == 'H') {
 
 		if (horseCheck(p, to)) {
 			movePoints(p, to);
+			return true;
 		}
-		return true;
+		
 	}
 
 
@@ -868,24 +870,27 @@ bool Grid::isValidMove(Piece p,  const Point& to, int color)
 
 		if (bishopCheck(p, to)) {
 			movePoints(p, to);
+			return true;
 		 }
-		return true;
+		
 	}
 
 	if (p.getName() == 'K') {
 
 		if (kingCheck(p, to) || isPossibleCastling(p, to, color)) {
 			movePoints(p, to);
+			return true;
 		}
-		return true;
+		
 	}
 
 	if (p.getName() == 'Q') {
 
 		if (queenCheck(p, to)) {
 			movePoints(p, to);
+			return true;
 		}
-		return true;
+		
 	}
 
 	return false;
