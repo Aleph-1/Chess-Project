@@ -3,8 +3,6 @@
 #include "Piece.h"
 using namespace std;
 
-//TODO: Add black won cout
-
 bool game(Grid grid) {
 
 	Piece King0(Point(1, 'E'), 'K', 0);
@@ -127,12 +125,6 @@ bool game(Grid grid) {
 
 int main() {
 
-	Point a(3, 'A');
-	Piece Queen(Point(1, 'D'), 'Q', 0);
-	Piece King(Point(1, 'E'), 'K', 0);
-	Piece Bishop(Point(1,'C'), 'B', 0);
-	Piece Horse(Point(1, 'B'), 'H', 0);
-	Piece Pawn(Point(2, 'D'), 'P', 0);
 	Grid A;
 	game(A);
 

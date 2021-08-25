@@ -901,7 +901,7 @@ bool Grid::isValidMove(Piece p,  const Point& to, int color)
 bool Grid::canIEat(Piece p, const Point& to, int color)
 {
 
-	if (p.getColor() == this->getGrid(to)->getColor() || p.getColor() != color){
+	if (p.getColor() == this->getGrid(to)->getColor() || p.getColor() != color || this->getGrid(to)->getColor() == 2){
 		return false;
 	}
 
